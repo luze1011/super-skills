@@ -1,0 +1,69 @@
+# Git Commit Message 模板
+
+## 格式
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+
+---
+
+## 类型说明
+feat     - 新功能
+fix      - Bug修复
+docs     - 文档更新
+style    - 代码格式调整（不影响功能）
+refactor - 代码重构
+test     - 测试相关
+chore    - 构建/工具相关
+perf     - 性能优化
+ci       - CI配置变更
+revert   - 回滚提交
+
+---
+
+## 示例
+
+### 简单提交
+feat: 添加用户登录功能
+
+### 带范围的提交
+feat(auth): 实现 JWT 认证
+fix(api): 修复请求超时问题
+docs(readme): 更新安装指南
+
+### 带详细说明
+feat(auth): 实现OAuth 2.0登录
+
+- 添加Google OAuth支持
+- 添加GitHub OAuth支持
+- 实现token刷新机制
+
+Closes #123
+
+---
+
+## 最佳实践
+
+✅ 使用祈使句 (add 而非 added)
+✅ 首字母小写
+✅ 主题行限制在50字符内
+✅ 正文每行限制在72字符内
+✅ 用正文说明"是什么"和"为什么"
+✅ 关联Issue编号
+
+❌ 避免模糊的描述
+❌ 不要使用过去式
+❌ 不要在主题行结尾加句号
+❌ 不要只写"fix bug"或"update code"
+
+---
+
+## 提交前检查
+
+[ ] 代码已测试
+[ ] 遵循团队规范
+[ ] 没有调试代码
+[ ] 文档已更新
+[ ] 提交信息清晰

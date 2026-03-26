@@ -1,0 +1,113 @@
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+
+/**
+ * Vitest Configuration
+ * @see https://vitest.dev/config/
+ */
+export default defineConfig({
+  plugins: [react()],
+  
+  test: {
+    // Test environment
+    environment: 'jsdom',
+    
+    // Global APIs (describe, it, expect, etc.)
+    globals: true,
+    
+    // Setup files
+    setupFiles: ['./tests/setup.ts'],
+    
+    // Include patterns
+    include: ['tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    
+    // Exclude patterns
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
+    
+    // Coverage configuration
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      
+      // Files to include in coverage
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      
+      // Files to exclude from coverage
+      exclude: [
+        'node_modules/',
+        'tests/',
+        '**/*.d.ts',
+        '**/*.config.{js,ts}',
+        '**/types/**',
+      ],
+      
+      // Thresholds
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 75,
+        statements: 80,
+      },
+      
+      // Enable all coverage
+      all: true,
+    },
+    
+    // Test timeout
+    testTimeout: 10000,
+    
+    // Hook timeout
+    hookTimeout: 10000,
+    
+    // Retry failed tests
+    retry: 0,
+    
+    // Run tests in parallel
+    threads: true,
+    
+    // Isolate tests
+    isolate: true,
+    
+    // Watch mode
+    watch: false,
+    
+    // Reporter
+    reporter: ['verbose', 'html'],
+    
+    // Output directory for test results
+    outputFile: {
+      html: './test-results/index.html',
+      junit: './test-results/junit.xml',
+    },
+    
+    // Slow test threshold
+    slowTestThreshold: 300,
+    
+    // Mock reset between tests
+    mockReset: true,
+    
+    // Clear mocks between tests
+    clearMocks: true,
+    
+    // Restore mocks after each test
+    restoreMocks: true,
+  },
+  
+  // Resolve configuration
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@components': '/src/components',
+      '@utils': '/src/utils',
+      '@hooks': '/src/hooks',
+      '@services': '/src/services',
+      '@types': '/src/types',
+    },
+  },
+  
+  // Define environment variables
+  define: {
+    'process.env.NODE_ENV': '"test"',
+  },
+});
