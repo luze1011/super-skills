@@ -65,12 +65,12 @@ web_search(query="关键词", safeSearch="strict")  # strict/moderate/off
 #### Google 搜索（通过 AI Mode）
 
 ```python
-# 工具：google-ai-mode-skill
+# 工具：browser + AI 视觉
 # 特点：AI 增强搜索，智能摘要，语义理解
 
-# AI 搜索
-read("~/.agents/skills/google-ai-mode-skill/SKILL.md")
-# 然后使用浏览器自动化访问 Google AI Mode
+# 使用 Midscene 浏览器访问 Google AI Mode
+npx @midscene/web@1 connect --url "https://google.com"
+npx @midscene/web@1 act --prompt "使用 AI Mode 搜索：AI 趋势 2024"
 ```
 
 #### Bing 搜索
@@ -101,9 +101,6 @@ results_news = read_skill("news-aggregator-skill")
 #### Google AI Mode 智能搜索
 
 ```python
-# 读取技能说明
-read("~/.agents/skills/google-ai-mode-skill/SKILL.md")
-
 # 使用浏览器自动化
 browser(action="open", url="https://www.google.com")
 browser(action="snapshot")
@@ -139,11 +136,13 @@ query = "最近 AI 领域有哪些重要的技术突破？"
 #### 多源新闻抓取
 
 ```python
-# 读取新闻聚合技能
-read("~/.agents/skills/news-aggregator-skill/SKILL.md")
+# 使用 web_search + web_fetch 组合抓取多个新闻源
 
-# 或使用 news-aggregator-skill
-# 自动抓取多个新闻源
+# DuckDuckGo 搜索新闻
+results = web_search(query="AI 新闻 最新", count=10)
+
+# 或使用 web_fetch 抓取 RSS 源
+feed_content = web_fetch(url="https://www.36kr.com/feed", extractMode="text")
 ```
 
 #### RSS 订阅管理
@@ -193,8 +192,13 @@ def filter_by_source(news_list, sources):
 #### TikTok 研究
 
 ```python
-# 读取 TikTok 研究技能
-read("~/.agents/skills/tiktok-research/SKILL.md")
+# 使用浏览器自动化访问 TikTok
+
+# 打开 TikTok 热门页面
+browser(action="open", url="https://www.tiktok.com/trending")
+
+# 获取热门视频信息
+browser(action="snapshot")
 
 # 功能：
 # - 热门视频分析
@@ -475,18 +479,6 @@ async def monitor_news(keywords, sources=None):
 
 ---
 
-## 🔗 相关技能
-
-| 技能 | 路径 | 用途 |
-|------|------|------|
-| `google-ai-mode-skill` | `~/.openclaw/workspace-taizi/skills/google-ai-mode-skill/` | Google AI 搜索 |
-| `news-aggregator-skill` | `~/.openclaw/workspace-taizi/skills/news-aggregator-skill/` | 新闻聚合 |
-| `tiktok-research` | `~/.agents/skills/tiktok-research/` | TikTok 研究 |
-| `multi-search-engine` | `~/.agents/skills/multi-search-engine/` | 多搜索引擎 |
-| `web-clipper` | `~/.agents/skills/web-clipper/` | 网页剪藏 |
-
----
-
 ## 💡 最佳实践
 
 ### 1. 选择合适的搜索工具
@@ -494,9 +486,9 @@ async def monitor_news(keywords, sources=None):
 | 需求 | 推荐工具 | 理由 |
 |------|---------|------|
 | 快速查询 | `web_search` | 无需 API Key，速度快 |
-| 深度研究 | `google-ai-mode-skill` | AI 增强，智能摘要 |
-| 新闻追踪 | `news-aggregator-skill` | 多源聚合，实时更新 |
-| 社交分析 | `tiktok-research` | 专业社交数据分析 |
+| 深度研究 | 浏览器 + AI Mode | AI 增强，智能摘要 |
+| 新闻追踪 | RSS + web_fetch | 多源聚合，实时更新 |
+| 社交分析 | 浏览器自动化 | 直接抓取社交数据 |
 
 ### 2. 异步处理大型搜索
 
