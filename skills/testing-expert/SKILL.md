@@ -1,6 +1,6 @@
 ---
 name: testing-expert
-description: Comprehensive testing expert combining Python testing patterns, test strategy design, and web application testing. Use when implementing tests, designing test strategies, setting up test infrastructure, or performing web application testing.
+description: Comprehensive testing expert for Python and web applications. Use when implementing tests (unit/integration/e2e), designing test strategies, setting up pytest or Playwright, writing fixtures, mocking dependencies, debugging flaky tests, or configuring CI/CD testing pipelines.
 license: MIT
 ---
 
@@ -534,6 +534,41 @@ playwright codegen http://localhost:3000
 - [Playwright Documentation](https://playwright.dev/python/)
 - [Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html)
 - [Hypothesis - Property-based Testing](https://hypothesis.works/)
+
+---
+
+## Bundled Resources
+
+### Scripts
+
+Executable scripts for running tests:
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| `scripts/run-pytest.sh` | Run pytest with coverage, parallelization, and threshold checking | `./run-pytest.sh tests/unit` |
+| `scripts/run-playwright.sh` | Run Playwright tests with optional server management | `./run-playwright.sh --server "npm run dev"` |
+
+**When to use scripts:**
+- Use `run-pytest.sh` for quick test execution with sensible defaults
+- Use `run-playwright.sh` when you need to start a dev server before running E2E tests
+
+### Reference Documentation
+
+Detailed patterns and examples (read as needed):
+
+| Reference | Content | When to Read |
+|-----------|---------|--------------|
+| `references/pytest-patterns.md` | Comprehensive pytest patterns: fixtures, parametrization, mocking, async, database testing | When writing complex pytest tests |
+| `references/playwright-examples.md` | Playwright patterns: selectors, assertions, page objects, authentication, visual testing | When implementing E2E tests |
+
+### Templates
+
+Ready-to-use configuration templates:
+
+| Template | Purpose | How to Use |
+|----------|---------|------------|
+| `assets/pytest.ini.template` | pytest configuration with markers, coverage, and logging | Copy to project root as `pytest.ini` |
+| `assets/conftest.py.template` | Shared fixtures for database, mocking, and utilities | Copy to `tests/conftest.py` and customize |
 
 ---
 

@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Super Browser Configuration",
+  "description": "超级浏览器技能配置文件",
+  "version": "1.0.0",
+  "defaults": {
+    "browser": {
+      "engine": "chromium",
+      "headless": false,
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "deviceScaleFactor": 1
+      },
+      "timeout": {
+        "navigation": 30000,
+        "action": 10000,
+        "wait": 5000
+      }
+    },
+    "midscene": {
+      "cdpPort": 9222,
+      "bridgePort": 3766,
+      "defaultModel": "gemini-3-flash"
+    },
+    "playwright": {
+      "slowMo": 0,
+      "video": false,
+      "trace": false
+    },
+    "agentBrowser": {
+      "colorScheme": "system",
+      "contentBoundaries": true,
+      "maxOutput": 50000
+    }
+  },
+  "models": {
+    "gemini": {
+      "name": "gemini-3-flash",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "family": "gemini",
+      "envKey": "MIDSCENE_MODEL_API_KEY"
+    },
+    "qwen": {
+      "name": "qwen3.5-plus",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "family": "qwen3.5",
+      "envKey": "MIDSCENE_MODEL_API_KEY"
+    },
+    "doubao": {
+      "name": "doubao-seed-2-0-lite",
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "family": "doubao-seed",
+      "envKey": "MIDSCENE_MODEL_API_KEY"
+    }
+  },
+  "devices": {
+    "desktop": {
+      "viewport": { "width": 1920, "height": 1080 },
+      "userAgent": "default"
+    },
+    "laptop": {
+      "viewport": { "width": 1366, "height": 768 },
+      "userAgent": "default"
+    },
+    "tablet": {
+      "viewport": { "width": 768, "height": 1024 },
+      "userAgent": "Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)"
+    },
+    "mobile": {
+      "viewport": { "width": 375, "height": 812 },
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)"
+    }
+  },
+  "routes": {
+    "blockImages": {
+      "pattern": "**/*.{jpg,jpeg,png,gif,webp,svg}",
+      "action": "abort"
+    },
+    "blockFonts": {
+      "pattern": "**/*.{woff,woff2,ttf,otf}",
+      "action": "abort"
+    },
+    "blockAnalytics": {
+      "pattern": "**/{ga,analytics,gtm,pixel}*",
+      "action": "abort"
+    }
+  },
+  "shortcuts": {
+    "common": {
+      "open": "open",
+      "snapshot": "snapshot",
+      "click": "click",
+      "fill": "fill",
+      "screenshot": "screenshot",
+      "close": "close"
+    },
+    "midscene": {
+      "connect": "npx @midscene/web@1 connect --url {url}",
+      "act": "npx @midscene/web@1 act --prompt \"{prompt}\"",
+      "extract": "npx @midscene/web@1 extract --prompt \"{prompt}\"",
+      "screenshot": "npx @midscene/web@1 take_screenshot",
+      "close": "npx @midscene/web@1 close"
+    },
+    "playwright": {
+      "open": "playwright-cli open {url}",
+      "snapshot": "playwright-cli snapshot",
+      "click": "playwright-cli click {ref}",
+      "fill": "playwright-cli fill {ref} \"{text}\"",
+      "screenshot": "playwright-cli screenshot {file}",
+      "close": "playwright-cli close"
+    },
+    "agentBrowser": {
+      "open": "agent-browser open {url}",
+      "snapshot": "agent-browser snapshot -i",
+      "click": "agent-browser click @{ref}",
+      "fill": "agent-browser fill @{ref} \"{text}\"",
+      "screenshot": "agent-browser screenshot {file}",
+      "close": "agent-browser close"
+    }
+  },
+  "workflows": {
+    "formFill": {
+      "description": "表单填写工作流",
+      "steps": [
+        "open {url}",
+        "snapshot",
+        "fill {fields}",
+        "click submit",
+        "verify"
+      ]
+    },
+    "login": {
+      "description": "登录工作流",
+      "steps": [
+        "open {loginUrl}",
+        "snapshot",
+        "fill username",
+        "fill password",
+        "click login",
+        "state-save"
+      ]
+    },
+    "scrape": {
+      "description": "数据抓取工作流",
+      "steps": [
+        "open {url}",
+        "wait load",
+        "extract {selector}",
+        "scroll",
+        "extract more",
+        "save"
+      ]
+    }
+  },
+  "safety": {
+    "allowedDomains": [],
+    "blockedDomains": [],
+    "contentBoundaries": true,
+    "maxRedirects": 10,
+    "maxPageSize": 10485760
+  }
+}

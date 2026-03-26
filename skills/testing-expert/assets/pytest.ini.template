@@ -1,0 +1,64 @@
+# pytest.ini.template
+# Copy this file to your project root as pytest.ini
+# Customize according to your project needs
+
+[pytest]
+# Test discovery paths
+testpaths = tests
+python_files = test_*.py *_test.py
+python_classes = Test*
+python_functions = test_*
+
+# Default command-line options
+addopts = 
+    -v
+    --tb=short
+    --strict-markers
+    --strict-config
+    --cov=.
+    --cov-report=term-missing
+    --cov-report=html:htmlcov
+    --cov-fail-under=80
+
+# Custom markers
+markers =
+    unit: Unit tests (fast, isolated)
+    integration: Integration tests (API, database, services)
+    e2e: End-to-end tests (full application flow)
+    slow: Tests that take significant time to run
+    smoke: Critical tests for deployment validation
+    regression: Tests for bug fixes
+    wip: Work in progress tests
+    skip_ci: Skip in CI environment
+
+# Minimum pytest version
+minversion = 7.0
+
+# Required plugins (install with pip)
+# pytest-cov: Coverage reporting
+# pytest-xdist: Parallel execution
+# pytest-asyncio: Async test support
+# pytest-mock: Mocking utilities
+# hypothesis: Property-based testing
+
+# Filter warnings
+filterwarnings =
+    error
+    ignore::DeprecationWarning
+    ignore::PendingDeprecationWarning
+
+# Logging configuration
+log_cli = true
+log_cli_level = INFO
+log_cli_format = %(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)
+log_cli_date_format = %Y-%m-%d %H:%M:%S
+
+# Test directories to exclude
+norecursedirs = .git .venv venv node_modules __pycache__ .tox dist build
+
+# Timeout for individual tests (requires pytest-timeout)
+# timeout = 300
+# timeout_method = thread
+
+# Async test configuration (requires pytest-asyncio)
+asyncio_mode = auto

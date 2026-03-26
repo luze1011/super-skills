@@ -1,6 +1,6 @@
 ---
 name: super-writing-assistant
-description: Use when writing any content that requires planning, drafting, and polishing - including marketing copy, technical docs, tutorials, skills, or implementation plans. Covers the full workflow from structure to final polish.
+description: Use when writing any content that requires planning, drafting, and polishing - including marketing copy, technical docs, tutorials, skills, or implementation plans. Covers the full workflow from structure to final polish. Make sure to use this skill whenever the user mentions writing, drafting, content creation, documentation, or needs help with any text-based output.
 ---
 
 # Super Writing Assistant
@@ -23,7 +23,13 @@ description: Use when writing any content that requires planning, drafting, and 
 
 **触发条件**：内容超过500字，或需要结构化输出。
 
-#### 1.1 需求收集
+使用 `scripts/plan-outline.py` 生成大纲：
+
+```bash
+python scripts/plan-outline.py --type <营销|技术|技能|计划> --topic "<主题>"
+```
+
+**需求收集清单**：
 
 | 内容类型 | 必问问题 |
 |---------|---------|
@@ -33,210 +39,62 @@ description: Use when writing any content that requires planning, drafting, and 
 | 技能文档 | 触发场景？核心原则？测试验证？ |
 | 实施计划 | 技术栈？文件结构？任务粒度？ |
 
-#### 1.2 结构设计
-
-**营销页面结构**：
-```
-标题（价值主张） → 副标题（具体化） → CTA
-社会证明 → 痛点描述 → 解决方案/收益
-工作原理 → 异议处理 → 最终CTA
-```
-
-**技术文档结构**：
-```
-概述（1-2句） → 前置条件
-核心概念 → 实现步骤（带代码）
-常见问题 → 进阶话题
-```
-
-**实施计划结构**：
-```
-目标陈述 → 架构概述 → 技术栈
-文件清单 → 任务分解（每步2-5分钟）
-验证步骤 → 提交节点
-```
-
-#### 1.3 任务分解
-
-将大内容拆分为可执行的小任务：
-- 每个任务独立可验证
-- 标注文件路径（涉及代码时）
-- 明确预期产出
+**结构模板参考**：见 `assets/article-template.md` 和 `assets/report-template.md`
 
 ---
 
 ### 阶段二：撰写 (Drafting)
 
-根据内容类型选择撰写策略。
+根据内容类型选择撰写策略，详见 `references/writing-styles.md`。
 
-#### 2.1 营销文案撰写
+**快速参考**：
 
-**核心原则**：
-| 原则 | 示例 |
-|------|------|
-| 清晰胜于聪明 | "快速生成报告" > "革命性的数据处理范式" |
-| 收益胜于功能 | "节省每周4小时" > "支持自动化" |
-| 具体胜于模糊 | "从4小时减到15分钟" > "大幅提升效率" |
-| 用户语言 | 用客户的原话，不用公司术语 |
+| 类型 | 核心原则 | 风格要点 |
+|------|---------|---------|
+| 营销文案 | 收益导向 | 清晰、具体、用户语言 |
+| 技术文档 | 实现导向 | 深度、同行语气、完整示例 |
+| 技能文档 | 触发导向 | 症状描述、原则、速查表 |
+| 实施计划 | 验证导向 | 小任务、TDD、文件路径 |
 
-**标题公式**：
-- "{达成结果} 无需 {痛点}"
-- "为{受众}打造的{品类}"
-- "再也不用{不愉快经历}"
-- "{直击痛点的问题}"
+**撰写工具**：
 
-**CTA公式**：
-- `[动词] + [得到什么] + [限定词]`
-- ✅ "开始免费试用" / "获取完整指南"
-- ❌ "提交" / "了解更多"
-
-#### 2.2 技术内容撰写
-
-**风格要求**：
-- 直接切入技术内容，避免泛泛介绍
-- 用同行对话的语气，不要教科书式
-- 解释"为什么"，不只是"怎么做"
-- 一个优秀示例胜过多个平庸示例
-
-**代码示例要求**：
-- 完整可运行，不是片段
-- 注释解释"为什么"而非"是什么"
-- 标注文件位置
-- 读者可直接改编使用
-
-**避免**：
-- 滥用形容词："关键"、"重要"、"强大"
-- 陈词滥调："在当今的技术领域..."
-- 无实质的列表：pros/cons/通用场景
-
-#### 2.3 技能文档撰写
-
-**SKILL.md 结构**：
-```markdown
----
-name: skill-name-with-hyphens
-description: Use when [具体触发条件和症状]
----
-
-# Skill Name
-
-## Overview
-核心原则（1-2句）
-
-## When to Use
-触发场景（症状、情境）
-
-## Core Pattern
-Before/After 对比
-
-## Quick Reference
-速查表/决策树
-
-## Implementation
-代码或链接
-
-## Common Mistakes
-常见错误 + 修复
+```bash
+# 生成初稿
+python scripts/write-draft.py --outline <大纲文件> --style <风格>
 ```
 
-**描述字段铁律**：
-- 只写触发条件，不写工作流程
-- 以 "Use when..." 开头
-- 第三人称
-- 包含症状、错误信息、具体场景
-
-#### 2.4 实施计划撰写
-
-**任务模板**：
-```markdown
-### Task N: [组件名]
-
-**Files:**
-- Create: `path/to/new.py`
-- Modify: `path/to/existing.py:123-145`
-- Test: `tests/path/test.py`
-
-- [ ] **Step 1: Write the failing test**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Write minimal implementation**
-- [ ] **Step 4: Run test to verify it passes**
-- [ ] **Step 5: Commit**
-```
+**模板参考**：见 `references/content-templates.md`
 
 ---
 
 ### 阶段三：润色 (Polishing)
 
-#### 3.1 质量检查清单
+**质量检查清单**：
 
-**通用检查**：
 - [ ] 每句话有独特价值（无重复信息）
 - [ ] 无冗余形容词/副词
 - [ ] 句式有变化（不单调）
 - [ ] 术语使用准确
 
-**营销文案检查**：
-- [ ] 标题传递核心价值？
-- [ ] CTA表达能得到什么？
-- [ ] 用了用户语言而非公司术语？
-- [ ] 每个段落只推进一个观点？
-- [ ] 无营销废话（"创新"、"革命性"）
+**润色工具**：
 
-**技术文档检查**：
-- [ ] 代码示例完整可运行？
-- [ ] 解释了技术决策的原因？
-- [ ] 文件位置标注清晰？
-- [ ] 无"关键"、"重要"等空洞词汇？
+```bash
+# 润色文本
+python scripts/polish-text.py --input <文件> --check-all
+```
 
-**技能文档检查**：
-- [ ] description 只含触发条件？
-- [ ] 关键词覆盖搜索场景？
-- [ ] 一个优秀示例？
-- [ ] 常见错误覆盖？
+**润色技巧**：
 
-#### 3.2 润色技巧
-
-**删减冗余**：
 ```markdown
 ❌ "这是一个非常重要的关键功能"
 ✅ "该功能..."
 
 ❌ "在当今快速发展的技术领域中"
 ✅ （删除）
-```
 
-**强化动词**：
-```markdown
 ❌ "可以帮助用户实现"
 ✅ "帮助用户实现" / "实现"
-
-❌ "对...进行了优化"
-✅ "优化了..."
 ```
-
-**具体化**：
-```markdown
-❌ "提升用户体验"
-✅ "将加载时间从5秒降至1秒"
-```
-
-#### 3.3 验证闭环
-
-**营销文案**：
-- 读者能否一句话说出价值主张？
-- CTA是否明确行动和收益？
-
-**技术文档**：
-- 读者能否按教程实现功能？
-- 代码示例能否直接运行？
-
-**技能文档**：
-- 新 agent 能否找到并正确使用？
-- 压力场景下是否遵循规则？
-
-**实施计划**：
-- 每步是否独立可验证？
-- 新工程师能否理解并执行？
 
 ---
 
@@ -244,26 +102,11 @@ Before/After 对比
 
 ```
 需要写什么？
-├─ 营销页面/转化文案
-│   └─ 使用营销文案策略 → 收益导向、用户语言、强CTA
-├─ 技术文档/教程
-│   └─ 使用技术写作策略 → 直接切入、深度解释、完整示例
-├─ 技能/SKILL.md
-│   └─ 使用技能文档策略 → 触发条件、核心原则、测试验证
-└─ 实施计划
-    └─ 使用计划撰写策略 → 任务分解、TDD、验证步骤
+├─ 营销页面/转化文案 → 收益导向、用户语言、强CTA
+├─ 技术文档/教程 → 直接切入、深度解释、完整示例
+├─ 技能/SKILL.md → 触发条件、核心原则、测试验证
+└─ 实施计划 → 任务分解、TDD、验证步骤
 ```
-
----
-
-## 内容类型速查
-
-| 类型 | 核心原则 | 风格要点 | 典型结构 |
-|------|---------|---------|---------|
-| 营销文案 | 收益导向 | 清晰、具体、用户语言 | 标题→痛点→方案→CTA |
-| 技术文档 | 实现导向 | 深度、同行语气、完整示例 | 概述→步骤→代码→FAQ |
-| 技能文档 | 触发导向 | 症状描述、原则、速查表 | 触发→原则→示例→错误 |
-| 实施计划 | 验证导向 | 小任务、TDD、文件路径 | 目标→结构→任务→验证 |
 
 ---
 
@@ -292,9 +135,9 @@ Before/After 对比
 
 ---
 
-## 关联技能
+## 参考资源
 
-- **copywriting** - 营销文案深度指南
-- **technical-writing** - 技术文档深度指南
-- **writing-skills** - 技能文档TDD方法论
-- **writing-plans** - 实施计划详细模板
+- **写作风格指南**：`references/writing-styles.md`
+- **内容模板库**：`references/content-templates.md`
+- **文章模板**：`assets/article-template.md`
+- **报告模板**：`assets/report-template.md`

@@ -1,0 +1,322 @@
+"""
+conftest.py.template
+Copy this file to your tests/ directory as conftest.py
+Customize fixtures according to your project needs
+"""
+
+import pytest
+import os
+import tempfile
+from pathlib import Path
+from typing import Generator, Any
+from unittest.mock import Mock, patch
+
+
+# ============================================================================
+# Configuration
+# ============================================================================
+
+def pytest_configure(config):
+    """Configure custom markers."""
+    config.addinivalue_line(
+        "markers", "unit: Unit tests (fast, isolated)"
+    )
+    config.addinivalue_line(
+        "markers", "integration: Integration tests (API, database)"
+    )
+    config.addinivalue_line(
+        "markers", "e2e: End-to-end tests (full application flow)"
+    )
+    config.addinivalue_line(
+        "markers", "slow: Tests that take significant time"
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Add markers based on test file location."""
+    for item in items:
+        # Auto-mark based on file path
+        if "unit" in str(item.fspath):
+            item.add_marker(pytest.mark.unit)
+        elif "integration" in str(item.fspath):
+            item.add_marker(pytest.mark.integration)
+        elif "e2e" in str(item.fspath):
+            item.add_marker(pytest.mark.e2e)
+
+
+# ============================================================================
+# Basic Fixtures
+# ============================================================================
+
+@pytest.fixture
+def sample_data() -> dict:
+    """Provide sample test data."""
+    return {
+        "id": 1,
+        "name": "Test Item",
+        "value": 100,
+        "active": True,
+    }
+
+
+@pytest.fixture
+def temp_file() -> Generator[str, None, None]:
+    """Create a temporary file for testing."""
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        f.write("test content")
+        temp_path = f.name
+    
+    yield temp_path
+    
+    # Cleanup
+    Path(temp_path).unlink(missing_ok=True)
+
+
+@pytest.fixture
+def temp_dir() -> Generator[Path, None, None]:
+    """Create a temporary directory for testing."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        yield Path(tmpdir)
+
+
+# ============================================================================
+# Environment Fixtures
+# ============================================================================
+
+@pytest.fixture
+def env_test_mode(monkeypatch):
+    """Set test mode environment variable."""
+    monkeypatch.setenv("TEST_MODE", "true")
+    monkeypatch.setenv("ENVIRONMENT", "test")
+    return True
+
+
+@pytest.fixture
+def mock_env_vars(monkeypatch):
+    """Mock common environment variables."""
+    test_env = {
+        "DATABASE_URL": "sqlite:///:memory:",
+        "API_KEY": "test-api-key",
+        "DEBUG": "true",
+        "LOG_LEVEL": "DEBUG",
+    }
+    for key, value in test_env.items():
+        monkeypatch.setenv(key, value)
+    return test_env
+
+
+# ============================================================================
+# Mocking Fixtures
+# ============================================================================
+
+@pytest.fixture
+def mock_request():
+    """Provide a mock HTTP request object."""
+    mock = Mock()
+    mock.json.return_value = {"data": "test"}
+    mock.status_code = 200
+    return mock
+
+
+@pytest.fixture
+def mock_response():
+    """Provide a mock HTTP response object."""
+    mock = Mock()
+    mock.status_code = 200
+    mock.json.return_value = {"success": True, "data": []}
+    mock.text = '{"success": true}'
+    return mock
+
+
+@pytest.fixture
+def mock_datetime():
+    """Mock datetime for consistent test timestamps."""
+    with patch("datetime.datetime") as mock_dt:
+        mock_dt.now.return_value.isoformat.return_value = "2024-01-01T00:00:00"
+        yield mock_dt
+
+
+# ============================================================================
+# Database Fixtures (Template)
+# ============================================================================
+
+# Uncomment and customize for your database setup
+
+# @pytest.fixture(scope="session")
+# def db_engine():
+#     """Create database engine for testing."""
+#     from sqlalchemy import create_engine
+#     engine = create_engine("sqlite:///:memory:")
+#     # Create tables
+#     # Base.metadata.create_all(engine)
+#     yield engine
+#     engine.dispose()
+
+
+# @pytest.fixture
+# def db_session(db_engine):
+#     """Create isolated database session for each test."""
+#     from sqlalchemy.orm import sessionmaker
+#     Session = sessionmaker(bind=db_engine)
+#     session = Session()
+#     
+#     yield session
+#     
+#     session.rollback()
+#     session.close()
+
+
+# ============================================================================
+# API Client Fixtures (Template)
+# ============================================================================
+
+# Uncomment and customize for your API setup
+
+# @pytest.fixture
+# def api_client():
+#     """Create test API client."""
+#     from httpx import Client
+#     client = Client(base_url="http://test")
+#     yield client
+#     client.close()
+
+
+# @pytest.fixture
+# def authenticated_client(api_client, mock_user):
+#     """Create authenticated API client."""
+#     # Add authentication headers
+#     api_client.headers["Authorization"] = f"Bearer {mock_user['token']}"
+#     return api_client
+
+
+# ============================================================================
+# User Fixtures (Template)
+# ============================================================================
+
+@pytest.fixture
+def mock_user():
+    """Provide mock user data."""
+    return {
+        "id": 1,
+        "email": "test@example.com",
+        "name": "Test User",
+        "is_active": True,
+        "token": "test-jwt-token",
+    }
+
+
+@pytest.fixture
+def mock_admin_user():
+    """Provide mock admin user data."""
+    return {
+        "id": 2,
+        "email": "admin@example.com",
+        "name": "Admin User",
+        "is_active": True,
+        "is_admin": True,
+        "token": "admin-jwt-token",
+    }
+
+
+# ============================================================================
+# Utility Fixtures
+# ============================================================================
+
+@pytest.fixture
+def assert_contains():
+    """Helper to check if substring is in string."""
+    def _assert_contains(haystack: str, needle: str) -> None:
+        assert needle in haystack, f"'{needle}' not found in '{haystack}'"
+    return _assert_contains
+
+
+@pytest.fixture
+def assert_valid_json():
+    """Helper to validate JSON structure."""
+    import json
+    def _assert_valid_json(data: Any, required_keys: list = None) -> None:
+        if isinstance(data, str):
+            data = json.loads(data)
+        if required_keys:
+            for key in required_keys:
+                assert key in data, f"Missing required key: {key}"
+        return data
+    return _assert_valid_json
+
+
+# ============================================================================
+# Performance Fixtures
+# ============================================================================
+
+@pytest.fixture
+def benchmark():
+    """Simple benchmarking fixture."""
+    import time
+    class Timer:
+        def __init__(self):
+            self.start_time = None
+            self.elapsed = None
+        
+        def start(self):
+            self.start_time = time.time()
+        
+        def stop(self):
+            self.elapsed = time.time() - self.start_time
+            return self.elapsed
+        
+        def __enter__(self):
+            self.start()
+            return self
+        
+        def __exit__(self, *args):
+            self.stop()
+    
+    return Timer()
+
+
+# ============================================================================
+# Cleanup Fixtures
+# ============================================================================
+
+@pytest.fixture(autouse=True)
+def cleanup_test_files():
+    """Auto-cleanup test files after each test."""
+    yield
+    
+    # Cleanup any test files created in tests/
+    test_files = Path("tests").glob("test_output_*")
+    for f in test_files:
+        f.unlink(missing_ok=True)
+
+
+# ============================================================================
+# Skip Conditions
+# ============================================================================
+
+# Skip tests based on environment
+skip_in_ci = pytest.mark.skipif(
+    os.getenv("CI") == "true",
+    reason="Skipped in CI environment"
+)
+
+skip_on_windows = pytest.mark.skipif(
+    os.name == "nt",
+    reason="Skipped on Windows"
+)
+
+skip_on_linux = pytest.mark.skipif(
+    os.name == "posix",
+    reason="Skipped on Linux"
+)
+
+# Skip if optional dependency not installed
+def skip_if_missing(module_name: str):
+    """Skip test if module is not installed."""
+    try:
+        __import__(module_name)
+        return pytest.mark.skipif(False, reason="")
+    except ImportError:
+        return pytest.mark.skipif(
+            True,
+            reason=f"Missing dependency: {module_name}"
+        )

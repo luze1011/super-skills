@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Desktop Control Plus Configuration",
+  "description": "桌面控制增强版配置文件",
+  
+  "version": "1.0.0",
+  
+  "engines": {
+    "pyautogui": {
+      "enabled": true,
+      "command": "uvx desktop-agent",
+      "description": "PyAutoGUI 精确控制引擎",
+      "capabilities": [
+        "mouse-control",
+        "keyboard-control",
+        "screen-capture",
+        "image-recognition",
+        "ocr",
+        "app-control"
+      ],
+      "defaultDuration": 0.3,
+      "defaultInterval": 0.05,
+      "failSafe": true
+    },
+    "midscene": {
+      "enabled": true,
+      "command": "npx @midscene/computer@1",
+      "description": "Midscene AI 视觉引擎",
+      "capabilities": [
+        "natural-language-control",
+        "ai-visual-understanding",
+        "intelligent-interaction",
+        "cross-platform"
+      ],
+      "defaultTimeout": 60000,
+      "deepThinkModels": [
+        "qwen3.5",
+        "qwen3-vl",
+        "doubao-seed",
+        "glm-v"
+      ]
+    }
+  },
+  
+  "models": {
+    "default": {
+      "provider": "qwen",
+      "name": "qwen3.5-plus",
+      "family": "qwen3.5",
+      "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
+      "reasoningEnabled": false
+    },
+    "alternatives": [
+      {
+        "provider": "doubao",
+        "name": "doubao-seed-2.0-lite",
+        "family": "doubao-seed",
+        "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+        "reasoningEnabled": true
+      },
+      {
+        "provider": "zhipu",
+        "name": "glm-4.6v",
+        "family": "glm-v",
+        "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+        "reasoningEnabled": true
+      }
+    ]
+  },
+  
+  "shortcuts": {
+    "windows": {
+      "showDesktop": ["win", "d"],
+      "explorer": ["win", "e"],
+      "switchWindow": ["alt", "tab"],
+      "run": ["win", "r"],
+      "taskManager": ["ctrl", "shift", "esc"],
+      "copy": ["ctrl", "c"],
+      "paste": ["ctrl", "v"],
+      "cut": ["ctrl", "x"],
+      "selectAll": ["ctrl", "a"],
+      "undo": ["ctrl", "z"],
+      "save": ["ctrl", "s"],
+      "find": ["ctrl", "f"],
+      "new": ["ctrl", "n"],
+      "close": ["alt", "f4"]
+    },
+    "macos": {
+      "spotlight": ["command", "space"],
+      "switchApp": ["command", "tab"],
+      "quitApp": ["command", "q"],
+      "screenshot": ["command", "shift", "3"],
+      "copy": ["command", "c"],
+      "paste": ["command", "v"],
+      "cut": ["command", "x"],
+      "selectAll": ["command", "a"],
+      "undo": ["command", "z"],
+      "save": ["command", "s"],
+      "find": ["command", "f"],
+      "new": ["command", "n"],
+      "close": ["command", "w"]
+    },
+    "linux": {
+      "run": ["alt", "f2"],
+      "copy": ["ctrl", "c"],
+      "paste": ["ctrl", "v"],
+      "cut": ["ctrl", "x"],
+      "selectAll": ["ctrl", "a"],
+      "undo": ["ctrl", "z"],
+      "save": ["ctrl", "s"],
+      "find": ["ctrl", "f"],
+      "new": ["ctrl", "n"],
+      "close": ["ctrl", "w"]
+    }
+  },
+  
+  "workflow": {
+    "modes": {
+      "precision": {
+        "description": "精确控制模式",
+        "engine": "pyautogui",
+        "useCases": [
+          "精确坐标操作",
+          "图像识别定位",
+          "OCR 文字定位",
+          "快捷键操作",
+          "表单填写"
+        ]
+      },
+      "intelligent": {
+        "description": "智能视觉模式",
+        "engine": "midscene",
+        "useCases": [
+          "复杂 UI 交互",
+          "目标驱动任务",
+          "自然语言控制",
+          "智能决策操作"
+        ]
+      },
+      "hybrid": {
+        "description": "混合模式（推荐）",
+        "engine": "both",
+        "useCases": [
+          "打开应用 + 复杂操作 + 快捷键",
+          "结合两种引擎优势"
+        ],
+        "phases": [
+          {
+            "phase": 1,
+            "engine": "pyautogui",
+            "action": "打开/聚焦应用"
+          },
+          {
+            "phase": 2,
+            "engine": "midscene",
+            "action": "执行复杂操作"
+          },
+          {
+            "phase": 3,
+            "engine": "pyautogui",
+            "action": "执行快捷键"
+          }
+        ]
+      }
+    }
+  },
+  
+  "safety": {
+    "warning": "此技能会接管用户的鼠标和键盘。自动化运行期间用户无法操作电脑。",
+    "recommendations": {
+      "webApp": "Web 应用优先使用 Browser Automation 技能（无头浏览器，不影响用户操作）",
+      "desktopApp": "仅用于桌面原生应用（Electron、Qt、原生 macOS/Windows/Linux 应用）"
+    },
+    "failSafe": {
+      "enabled": true,
+      "trigger": "鼠标移动到屏幕角落",
+      "action": "终止自动化操作"
+    }
+  },
+  
+  "reporting": {
+    "midscene": {
+      "outputDir": "./midscene_run/report",
+      "filenamePattern": "computer-YYYY-MM-DD_HH-MM-SS-xxx.html",
+      "content": [
+        "执行步骤截图",
+        "AI 规划过程",
+        "执行时间统计",
+        "错误信息"
+      ]
+    }
+  },
+  
+  "errorCodes": {
+    "invalid_argument": {
+      "message": "参数无效",
+      "recoverable": true,
+      "suggestion": "检查参数格式"
+    },
+    "coordinates_out_of_bounds": {
+      "message": "坐标超出屏幕",
+      "recoverable": true,
+      "suggestion": "使用 screen size 验证"
+    },
+    "image_not_found": {
+      "message": "图像未找到",
+      "recoverable": true,
+      "suggestion": "降低置信度或更新图像"
+    },
+    "window_not_found": {
+      "message": "窗口未找到",
+      "recoverable": true,
+      "suggestion": "使用 app list 查看正确标题"
+    },
+    "ocr_failed": {
+      "message": "OCR 失败",
+      "recoverable": true,
+      "suggestion": "确保窗口可见"
+    },
+    "application_not_found": {
+      "message": "应用未找到",
+      "recoverable": true,
+      "suggestion": "检查应用名称或路径"
+    },
+    "permission_denied": {
+      "message": "权限被拒绝",
+      "recoverable": false,
+      "suggestion": "检查辅助功能权限"
+    },
+    "timeout": {
+      "message": "操作超时",
+      "recoverable": true,
+      "suggestion": "增加等待时间或拆分任务"
+    }
+  },
+  
+  "resources": {
+    "pyautogui": {
+      "documentation": "https://pyautogui.readthedocs.io/",
+      "github": "https://github.com/asweigart/pyautogui"
+    },
+    "midscene": {
+      "documentation": "https://midscenejs.com/",
+      "github": "https://github.com/web-infra-dev/midscene",
+      "discord": "https://discord.gg/midscene"
+    }
+  }
+}
